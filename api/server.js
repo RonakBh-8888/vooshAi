@@ -4,17 +4,10 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-//const dotenv = require('dotenv');
-// const authRoutes = require('./routes/authRoutes');
-// const profileRoutes = require('./routes/profileRoutes');
-const authMiddleware = require('./src/authMiddleware');
 const router = require('./src/routes');
 const { databaseStore } = require('./config')
 var cors = require('cors');
 
-
-// Load environment variables from .env file
-//dotenv.config();
 
 // Initialize Express app
 const app = express();
@@ -39,9 +32,10 @@ mongoose.connect(URL, {
 }).then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
 
+
 // Routes
 app.use('/vooshai-api', router);
-//app.use('/api', profileRoutes);
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -52,5 +46,6 @@ app.use((err, req, res, next) => {
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
+  global.pendingRequest = 0;
   console.log(`Server is running on port ${PORT}`);
 });

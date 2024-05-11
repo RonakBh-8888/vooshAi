@@ -1,0 +1,4 @@
+# package directories
+api/node_modules
+jspm_packages
+api/package-lock.json
