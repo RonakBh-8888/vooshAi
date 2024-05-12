@@ -6,7 +6,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const router = require('./src/routes');
 const { databaseStore } = require('./config')
-var cors = require('cors');
+const cors = require('cors');
+
 
 
 // Initialize Express app
@@ -32,6 +33,11 @@ mongoose.connect(URL, {
 }).then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
 
+//request handler
+app.use(require('./src/middleware/request'));
+
+//authontication of user idToken
+app.use(require('./src/middleware/authMiddleware'));
 
 // Routes
 app.use('/vooshai-api', router);

@@ -28,11 +28,11 @@ class Users {
       const { email, password } = req.body;
       const user = await User.findOne({ email });
       if (!user) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return  this.response.unAuthorizedError({ message: "Invalid credentials" });
       }
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return this.response.unAuthorizedError({ message: "Invalid credentials" });
       }
 
       let options = {
@@ -45,9 +45,10 @@ class Users {
         expiresIn: "1h",
       });
       res.cookie("SessionToken", token, options);
-      res.json({ token });
+      //res.json({ token });
+      this.response.success({data: token, message: 'User registered successfully'});
     } catch (error) {
-      res.status(500).json({ error: error.message });
+        this.response.serverError(error);
     }
   }
 
@@ -80,6 +81,24 @@ class Users {
        this.response.success(resData);
     } catch (error) {
        this.response.serverError(error);
+    }
+  }
+
+  async updateProfile(){
+    try {
+        const req  = this.req;
+
+        const user = await User.findOne({ _id : req.headers.userMeta._id });
+        const updatedData = req.body;
+        if(req.body._id ===  user._id || user.roleType === 'ADMIN'){
+            const responce  = await User.findOneAndUpdate({_id: req.body._id}, updatedData, { new : true} )
+            this.response.success({data: responce, message: 'User details updated successfully'});
+        } else {
+            this.response.failure({ data: {}, message: 'you does not have access to update this profile' })
+        }
+        
+    } catch (error) {
+        this.response.serverError(error);
     }
   }
 }

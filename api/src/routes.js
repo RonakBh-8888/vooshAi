@@ -25,5 +25,9 @@ router.post('/viewProfile', async (req, res)=>{
       return await userApi.viewProfile();
 })
 
+router.put('/updateProfile', async (req, res) => {
+  const userApi  = new Users(req, res);
+  return await userApi.updateProfile(); 
+});
 
 module.exports = router;
